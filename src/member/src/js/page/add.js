@@ -1,0 +1,52 @@
+require(['../js/config.js'],function(){
+	require(['mui','dom','params'],function(mui,dom,params){
+		mui.init();
+		var id=params.id||'';
+		if(id){
+			mui.ajax('/users/api/detail',{
+				data:{
+					id:id
+				},
+				dataType:'json',
+				success:function(res){
+					if(res.code===1){
+						var data=res.data[0];
+						dom('.name').value=data.name;
+						dom('.address').value=data.address||'';
+						dom('.phone').value=data.phone||'';
+						dom('.idcard').value=data.idcard;
+					}
+				}
+			})
+		}
+		//点击确认
+		dom('.cur-btn').addEventListener('tap',function(){
+			var name=dom('.name').value,
+				address=dom('.address').value,
+				phone=dom('.phone').value,
+				idcard=dom('.idcard').value;
+			if(!name||!idcard){
+				alert('姓名或身份证号不能为空！');
+			}else{
+				var url=id?'/users/api/update':'/users/api/add';
+				mui.ajax(url,{
+					type:'post',
+					data:{
+						name:name,
+						address:address,
+						phone:phone,
+						idcard:idcard,
+						id:id
+					},
+					dataType:'json',
+					success:function(res){
+						if(res.code===1){
+							alert(res.msg);
+							location.href='../index.html';
+						}
+					}
+				})
+			}
+		})	
+	});
+});
